@@ -1,2 +1,3 @@
 ---
+- debug: msg="action is {{ action }}"
 - include: "{{ action }}.yml"

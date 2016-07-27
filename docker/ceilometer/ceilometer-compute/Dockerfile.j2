@@ -14,7 +14,13 @@ RUN yum -y install \
 RUN apt-get -y install --no-install-recommends \
         ceilometer-agent-compute \
         python-ceilometerclient \
+        libvirt-dev \
+        gcc \
+        python-dev \
+        pkg-config \
     && apt-get clean
+
+RUN pip install --upgrade libvirt-python
 
     {% endif %}
 {% elif install_type == 'source' %}

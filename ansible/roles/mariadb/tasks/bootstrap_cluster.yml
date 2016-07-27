@@ -26,7 +26,7 @@
     common_options: "{{ docker_common_options }}"
     environment:
       KOLLA_CONFIG_STRATEGY: "{{ config_strategy }}"
-      BOOTSTRAP_ARGS: "--wsrep-new-cluster"
+      BOOTSTRAP_ARGS: "--wsrep-new-cluster --syslog"
     image: "{{ mariadb_image_full }}"
     labels:
       BOOTSTRAP:

@@ -162,7 +162,7 @@ admin_protocol: "http"
 # OpenStack options
 ####################
 openstack_release: "3.0.0"
-openstack_logging_debug: "False"
+openstack_logging_debug: "True"
 
 openstack_region_name: "RegionOne"
 
@@ -192,7 +192,7 @@ enable_nova: "yes"
 enable_rabbitmq: "yes"
 
 # Additional optional OpenStack services are specified here
-enable_ceilometer: "no"
+enable_ceilometer: "yes"
 enable_central_logging: "no"
 enable_ceph: "no"
 enable_ceph_rgw: "no"
@@ -204,7 +204,7 @@ enable_iscsi: "no"
 enable_magnum: "no"
 enable_manila: "no"
 enable_mistral: "no"
-enable_mongodb: "no"
+enable_mongodb: "yes"
 enable_murano: "no"
 enable_neutron_lbaas: "no"
 enable_neutron_qos: "no"

@@ -1,3 +1,6 @@
+- name: Install pymongo
+  pip: name=pymongo
+
 - name: Running Ceilometer bootstrap container
   kolla_docker:
     action: "start_container"

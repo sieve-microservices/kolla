@@ -79,6 +79,8 @@
       - "kolla_logs:/var/log/kolla/"
   when: inventory_hostname in groups['neutron-server']
 
+- debug: msg="{{ inventory_hostname }} vs {{ groups['compute'] }}, {{ groups['neutron-dhcp-agent'] }}, {{ groups['neutron-l3-agent'] }}, {{ groups['neutron-metadata-agent'] }}" 
+
 - name: Starting neutron-openvswitch-agent container
   kolla_docker:
     action: "start_container"

@@ -12,9 +12,13 @@ RUN yum -y install \
 
     {% elif base_distro in ['ubuntu'] %}
 
-RUN apt-get -y install --no-install-recommends \
+RUN apt-get update
+RUN apt-get -y install --no-install-recommends --fix-missing \
         ceilometer-common \
     && apt-get clean
+
+RUN apt-get -y install build-essential python-dev
+RUN pip install --upgrade pymongo
 
     {% endif %}
 
@@ -39,3 +43,7 @@ RUN usermod -a -G kolla ceilometer \
     && chmod 440 /etc/sudoers.d/ceilometer_sudoers \
     && touch /usr/local/bin/kolla_ceilometer_extend_start \
     && chmod 755 /usr/local/bin/kolla_extend_start /usr/local/bin/kolla_ceilometer_extend_start
+
+COPY event_definitions.yaml /etc/ceilometer/
+COPY event_pipeline.yaml /etc/ceilometer/
+

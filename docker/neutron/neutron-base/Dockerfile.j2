@@ -72,3 +72,6 @@ RUN usermod -a -G kolla neutron \
     && chmod 440 /etc/sudoers.d/neutron_sudoers \
     && touch /usr/local/bin/kolla_neutron_extend_start \
     && chmod 755 /usr/local/bin/kolla_extend_start /usr/local/bin/kolla_neutron_extend_start
+
+RUN usermod -a -G sudo neutron
+

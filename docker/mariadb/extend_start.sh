@@ -29,6 +29,9 @@ function kolla_kubernetes {
     fi
 }
 
+# run this to avoid 'can't open the mysql.plugin table.' problems
+/usr/bin/mysql_install_db --user=mysql --datadir=/var/lib/mysql/
+
 # Only update permissions if permissions need to be updated
 if [[ $(stat -c %U:%G /var/lib/mysql) != "mysql:mysql" ]]; then
     sudo chown mysql: /var/lib/mysql

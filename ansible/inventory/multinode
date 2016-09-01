@@ -2,9 +2,16 @@
 # additional groups are for more control of the environment.
 [control]
 # These hostname must be resolvable from your deployment host
-control01
-control02
-control03
+#192.168.8.33
+#192.168.8.34
+#192.168.8.35
+#192.168.8.36
+#192.168.8.37
+#192.168.8.38
+#192.168.8.40
+#192.168.8.41
+#192.168.8.42
+192.168.8.43
 
 # The above can also be specified as follows:
 #control[01:03]     ansible_ssh_user=kolla
@@ -12,17 +19,17 @@ control03
 # The network nodes are where your l3-agent and loadbalancers will run
 # This can be the same as a host in the control group
 [network]
-network01
+192.168.8.40
 
 [compute]
-compute01
+192.168.8.42
 
 # When compute nodes and control nodes use different interfaces,
 # you can specify "api_interface" and another interfaces like below:
 #compute01 neutron_external_interface=eth0 api_interface=em1 storage_interface=em1 tunnel_interface=em1
 
 [storage]
-storage01
+192.168.8.43
 
 
 # You can explicitly specify which hosts run each project by updating the

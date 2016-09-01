@@ -30,7 +30,13 @@ function kolla_kubernetes {
 }
 
 # run this to avoid 'can't open the mysql.plugin table.' problems
-/usr/bin/mysql_install_db --user=mysql --datadir=/var/lib/mysql/
+# EDIT: not sure why, but the use of this line seems to be 'flaky', with 
+# varying results:
+#   -# mariadb starts, but no mysql root user is created (expected)
+#   -# mariadb starts, root user is created (?) but i can't login to database. 
+#      after commenting this line, everything works fine.
+# for now, i've decided to comment it then
+#/usr/bin/mysql_install_db --user=mysql --datadir=/var/lib/mysql/
 
 # Only update permissions if permissions need to be updated
 if [[ $(stat -c %U:%G /var/lib/mysql) != "mysql:mysql" ]]; then

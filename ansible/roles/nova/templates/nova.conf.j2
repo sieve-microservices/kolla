@@ -58,6 +58,9 @@ notify_on_state_change = vm_and_task_state
 notification_driver = messagingv2
 {% endif %}
 
+# enable collecting CPU related meters from the compute host machines
+compute_monitors = ComputeDriverCPUMonitor
+
 {% if nova_console == 'novnc' %}
 [vnc]
 novncproxy_host = {{ hostvars[inventory_hostname]['ansible_' + api_interface]['ipv4']['address'] }}

@@ -66,10 +66,13 @@ use = egg:swift#slo
 [filter:dlo]
 use = egg:swift#dlo
 
+{% if enable_ceilometer | bool %}
 [filter:ceilometer]
 paste.filter_factory = ceilometermiddleware.swift:filter_factory
 control_exchange = swift
-url = rabbit://{{ rabbitmq_user }}:{{ rabbitmq_password }}@{% for host in groups['rabbitmq'] %}{{ hostvars[host]['ansible_' + hostvars[host]['api_interface']]['ipv4']['address'] }}:{{ rabbitmq_port }}{% if not loop.last %},{% endif %}{% endfor %}
+url = rabbit://{{ rabbitmq_user }}:{{ rabbitmq_password }}@://{{ kolla_internal_fqdn }}:{{ rabbitmq_port }}/
 driver = messagingv2
 topic = notifications
 log_level = WARN
+{% endif %}
+

@@ -19,6 +19,7 @@
     - "neutron-l3-agent"
     - "neutron-linuxbridge-agent"
     - "neutron-metadata-agent"
+    - "neutron-metering-agent"
     - "neutron-openvswitch-agent"
     - "neutron-server"
     - "openvswitch-db-server"
@@ -34,6 +35,7 @@
     - "neutron-l3-agent"
     - "neutron-linuxbridge-agent"
     - "neutron-metadata-agent"
+    - "neutron-metering-agent"
     - "neutron-openvswitch-agent"
     - "neutron-server"
     - "openvswitch-db-server"
@@ -58,6 +60,7 @@
     - "neutron-l3-agent"
     - "neutron-linuxbridge-agent"
     - "neutron-metadata-agent"
+    - "neutron-metering-agent"
     - "neutron-openvswitch-agent"
     - "neutron-server"
     - "neutron-lbaas-agent"
@@ -76,6 +79,7 @@
     - "neutron-l3-agent"
     - "neutron-linuxbridge-agent"
     - "neutron-metadata-agent"
+    - "neutron-metering-agent"
     - "neutron-openvswitch-agent"
     - "neutron-server"
 
@@ -129,6 +133,17 @@
     dest: "{{ node_config_directory }}/{{ item }}/metadata_agent.ini"
   with_items:
     - "neutron-metadata-agent"
+
+- name: Copying over metering_agent.ini
+  merge_configs:
+    vars:
+      service_name: "{{ item }}"
+    sources:
+      - "{{ role_path }}/templates/metering_agent.ini.j2"
+      - "{{ node_custom_config }}/neutron/metering_agent.ini"
+    dest: "{{ node_config_directory }}/{{ item }}/metering_agent.ini"
+  with_items:
+    - "neutron-metering-agent"
 
 - name: Copying over lbaas_agent.ini
   merge_configs:

@@ -33,6 +33,8 @@ RUN ln -s ceilometer-base-source/* ceilometer \
     && chown -R ceilometer: /etc/ceilometer /var/log/ceilometer /home/ceilometer \
     && sed -i 's|^exec_dirs.*|exec_dirs=/var/lib/kolla/venv/bin,/sbin,/usr/sbin,/bin,/usr/bin,/usr/local/bin,/usr/local/sbin|g' /etc/ceilometer/rootwrap.conf
 
+RUN pip install --upgrade pymongo
+
 {% endif %}
 
 COPY ceilometer_sudoers /etc/sudoers.d/ceilometer_sudoers
@@ -46,4 +48,5 @@ RUN usermod -a -G kolla ceilometer \
 
 COPY event_definitions.yaml /etc/ceilometer/
 COPY event_pipeline.yaml /etc/ceilometer/
+COPY pipeline.yaml /etc/ceilometer/
 

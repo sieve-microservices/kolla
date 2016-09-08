@@ -32,6 +32,10 @@ neutron_metadata_agent_image: "{{ docker_registry ~ '/' if docker_registry else 
 neutron_metadata_agent_tag: "{{ openstack_release }}"
 neutron_metadata_agent_image_full: "{{ neutron_metadata_agent_image }}:{{ neutron_metadata_agent_tag }}"
 
+neutron_metering_agent_image: "{{ docker_registry ~ '/' if docker_registry else '' }}{{ docker_namespace }}/{{ kolla_base_distro }}-{{ kolla_install_type }}-neutron-metering-agent"
+neutron_metering_agent_tag: "{{ openstack_release }}"
+neutron_metering_agent_image_full: "{{ neutron_metering_agent_image }}:{{ neutron_metering_agent_tag }}"
+
 neutron_openvswitch_agent_image: "{{ docker_registry ~ '/' if docker_registry else '' }}{{ docker_namespace }}/{{ kolla_base_distro }}-{{ kolla_install_type }}-neutron-openvswitch-agent"
 neutron_openvswitch_agent_tag: "{{ openstack_release }}"
 neutron_openvswitch_agent_image_full: "{{ neutron_openvswitch_agent_image }}:{{ neutron_openvswitch_agent_tag }}"

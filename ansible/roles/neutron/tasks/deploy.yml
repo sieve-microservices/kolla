@@ -11,6 +11,7 @@
         or inventory_hostname in groups['neutron-dhcp-agent']
         or inventory_hostname in groups['neutron-l3-agent']
         or inventory_hostname in groups['neutron-metadata-agent']
+        or inventory_hostname in groups['neutron-metering-agent']
         or inventory_hostname in groups['neutron-server']
         or inventory_hostname in groups['neutron-lbaas-agent']
 
@@ -28,5 +29,6 @@
         or inventory_hostname in groups['neutron-dhcp-agent']
         or inventory_hostname in groups['neutron-l3-agent']
         or inventory_hostname in groups['neutron-metadata-agent']
+        or inventory_hostname in groups['neutron-metering-agent']
         or inventory_hostname in groups['neutron-server']
         or inventory_hostname in groups['neutron-lbaas-agent']

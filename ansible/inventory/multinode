@@ -19,7 +19,7 @@
 # The network nodes are where your l3-agent and loadbalancers will run
 # This can be the same as a host in the control group
 [network]
-192.168.8.40
+192.168.8.42
 
 [compute]
 192.168.8.42
@@ -30,7 +30,6 @@
 
 [storage]
 192.168.8.43
-
 
 # You can explicitly specify which hosts run each project by updating the
 # groups in the sections below. Common services are grouped together.
@@ -156,6 +155,9 @@ neutron
 neutron
 
 [neutron-metadata-agent:children]
+neutron
+
+[neutron-metering-agent:children]
 neutron
 
 # Cinder

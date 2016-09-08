@@ -47,6 +47,7 @@ fi
 if [[ ! -d "/var/log/kolla/mariadb" ]]; then
     mkdir -p /var/log/kolla/mariadb
 fi
+
 if [[ $(stat -c %a /var/log/kolla/mariadb) != "755" ]]; then
     chmod 755 /var/log/kolla/mariadb
 fi

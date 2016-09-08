@@ -23,7 +23,8 @@
        or (enable_manila | bool and inventory_hostname in groups['manila-share'])
        or inventory_hostname in groups['neutron-dhcp-agent']
        or inventory_hostname in groups['neutron-l3-agent']
-       or inventory_hostname in groups['neutron-metadata-agent'])
+       or inventory_hostname in groups['neutron-metadata-agent']
+       or inventory_hostname in groups['neutron-metering-agent'])
     - neutron_plugin_agent == "linuxbridge"
 
 - name: Pulling neutron-metadata-agent image
@@ -32,6 +33,15 @@
     common_options: "{{ docker_common_options }}"
     image: "{{ neutron_metadata_agent_image_full }}"
   when: inventory_hostname in groups['neutron-metadata-agent']
+
+- name: Pulling neutron-metering-agent image
+  kolla_docker:
+    action: "pull_image"
+    common_options: "{{ docker_common_options }}"
+    image: "{{ neutron_metering_agent_image_full }}"
+  when: 
+    - inventory_hostname in groups['neutron-metering-agent']
+    - enable_neutron_metering | bool
 
 - name: Pulling neutron-openvswitch-agent image
   kolla_docker:
@@ -43,7 +53,8 @@
        or (enable_manila | bool and inventory_hostname in groups['manila-share'])
        or inventory_hostname in groups['neutron-dhcp-agent']
        or inventory_hostname in groups['neutron-l3-agent']
-       or inventory_hostname in groups['neutron-metadata-agent'])
+       or inventory_hostname in groups['neutron-metadata-agent']
+       or inventory_hostname in groups['neutron-metering-agent'])
     - neutron_plugin_agent == "openvswitch"
 
 - name: Pulling neutron-server image
@@ -63,7 +74,8 @@
        or (enable_manila | bool and inventory_hostname in groups['manila-share'])
        or inventory_hostname in groups['neutron-dhcp-agent']
        or inventory_hostname in groups['neutron-l3-agent']
-       or inventory_hostname in groups['neutron-metadata-agent'])
+       or inventory_hostname in groups['neutron-metadata-agent']
+       or inventory_hostname in groups['neutron-metering-agent'])
     - neutron_plugin_agent == "openvswitch"
 
 - name: Pulling openvswitch-vswitchd image
@@ -76,5 +88,6 @@
        or (enable_manila | bool and inventory_hostname in groups['manila-share'])
        or inventory_hostname in groups['neutron-dhcp-agent']
        or inventory_hostname in groups['neutron-l3-agent']
-       or inventory_hostname in groups['neutron-metadata-agent'])
+       or inventory_hostname in groups['neutron-metadata-agent']
+       or inventory_hostname in groups['neutron-metering-agent'])
     - neutron_plugin_agent == "openvswitch"

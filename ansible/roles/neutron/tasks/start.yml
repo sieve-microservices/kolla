@@ -221,3 +221,20 @@
       - "kolla_logs:/var/log/kolla/"
   when:
     - inventory_hostname in groups['neutron-metadata-agent']
+
+- name: Starting neutron-metering-agent container
+  kolla_docker:
+    action: "start_container"
+    common_options: "{{ docker_common_options }}"
+    image: "{{ neutron_metering_agent_image_full }}"
+    name: "neutron_metering_agent"
+    privileged: True
+    volumes:
+      - "{{ node_config_directory }}/neutron-metering-agent/:{{ container_config_directory }}/:ro"
+      - "/run:/run"
+      - "/run/netns/:/run/netns/:shared"
+      - "neutron_metadata_socket:/var/lib/neutron/kolla/"
+      - "kolla_logs:/var/log/kolla/"
+  when:
+    - enable_neutron_metering | bool
+    - inventory_hostname in groups['neutron-metering-agent']

@@ -56,10 +56,10 @@ instance_usage_audit = True
 instance_usage_audit_period = hour
 notify_on_state_change = vm_and_task_state
 notification_driver = messagingv2
-{% endif %}
 
 # enable collecting CPU related meters from the compute host machines
 compute_monitors = ComputeDriverCPUMonitor
+{% endif %}
 
 {% if nova_console == 'novnc' %}
 [vnc]

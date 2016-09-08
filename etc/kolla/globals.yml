@@ -121,6 +121,7 @@ enable_ironic: "no"
 #enable_murano: "no"
 #enable_neutron_lbaas: "no"
 #enable_neutron_qos: "no"
+enable_neutron_metering: "yes"
 enable_swift: "yes"
 
 

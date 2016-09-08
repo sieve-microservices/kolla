@@ -14,6 +14,7 @@
     - { name: neutron_l3_agent, group: neutron-l3-agent }
     - { name: neutron_lbaas_agent, group: neutron-lbaas-agent, enabled: "{{ enable_neutron_lbaas | bool }}" }
     - { name: neutron_metadata_agent, group: neutron-metadata-agent }
+    - { name: neutron_metering_agent, group: neutron-metering-agent, enabled: "{{ enable_neutron_metering | bool }}" }
 
 - name: Ensuring the neutron_openvswitch_agent container is up
   kolla_docker:
@@ -30,12 +31,14 @@
           or inventory_hostname in groups['neutron-l3-agent']
           or inventory_hostname in groups['neutron-lbaas-agent']
           or inventory_hostname in groups['neutron-metadata-agent']
+          or inventory_hostname in groups['neutron-metering-agent']
           and not enable_nova_fake | bool
         ) or
         ( inventory_hostname in groups['neutron-dhcp-agent']
           or inventory_hostname in groups['neutron-l3-agent']
           or inventory_hostname in groups['neutron-lbaas-agent']
           or inventory_hostname in groups['neutron-metadata-agent']
+          or inventory_hostname in groups['neutron-metering-agent']
           and enable_nova_fake | bool
         )
       )
@@ -53,7 +56,8 @@
        or inventory_hostname in groups['neutron-dhcp-agent']
        or inventory_hostname in groups['neutron-l3-agent']
        or inventory_hostname in groups['neutron-lbaas-agent']
-       or inventory_hostname in groups['neutron-metadata-agent'])
+       or inventory_hostname in groups['neutron-metadata-agent']
+       or inventory_hostname in groups['neutron-metering-agent'])
 
 - include: config.yml
 
@@ -71,6 +75,7 @@
     - { name: neutron_l3_agent, group: neutron-l3-agent }
     - { name: neutron_lbaas_agent, group: neutron-lbaas-agent, enabled: "{{ enable_neutron_lbaas | bool }}" }
     - { name: neutron_metadata_agent, group: neutron-metadata-agent }
+    - { name: neutron_metering_agent, group: neutron-metering-agent, enabled: "{{ enable_neutron_metering | bool }}" }
 
 - name: Check the configs in the neutron_openvswitch_agent container
   command: docker exec neutron_openvswitch_agent /usr/local/bin/kolla_set_configs --check
@@ -86,12 +91,14 @@
           or inventory_hostname in groups['neutron-l3-agent']
           or inventory_hostname in groups['neutron-lbaas-agent']
           or inventory_hostname in groups['neutron-metadata-agent']
+          or inventory_hostname in groups['neutron-metering-agent']
           and not enable_nova_fake | bool
         ) or
         ( inventory_hostname in groups['neutron-dhcp-agent']
           or inventory_hostname in groups['neutron-l3-agent']
           or inventory_hostname in groups['neutron-lbaas-agent']
           or inventory_hostname in groups['neutron-metadata-agent']
+          or inventory_hostname in groups['neutron-metering-agent']
           and enable_nova_fake | bool
         )
       )
@@ -108,7 +115,8 @@
        or inventory_hostname in groups['neutron-dhcp-agent']
        or inventory_hostname in groups['neutron-l3-agent']
        or inventory_hostname in groups['neutron-lbaas-agent']
-       or inventory_hostname in groups['neutron-metadata-agent'])
+       or inventory_hostname in groups['neutron-metadata-agent']
+       or inventory_hostname in groups['neutron-metering-agent'])
 
 # NOTE(jeffrey4l): when config_strategy == 'COPY_ALWAYS'
 # and container env['KOLLA_CONFIG_STRATEGY'] == 'COPY_ONCE',
@@ -127,6 +135,7 @@
     - { name: neutron_l3_agent, group: neutron-l3-agent }
     - { name: neutron_lbaas_agent, group: neutron-lbaas-agent, enabled: "{{ enable_neutron_lbaas | bool }}" }
     - { name: neutron_metadata_agent, group: neutron-metadata-agent }
+    - { name: neutron_metering_agent, group: neutron-metering-agent, enabled: "{{ enable_neutron_metering | bool }}" }
 
 - name: Container config strategy for the neutron_openvswitch_agent container
   kolla_docker:
@@ -143,12 +152,14 @@
           or inventory_hostname in groups['neutron-l3-agent']
           or inventory_hostname in groups['neutron-lbaas-agent']
           or inventory_hostname in groups['neutron-metadata-agent']
+          or inventory_hostname in groups['neutron-metering-agent']
         ) or
         ( enable_nova_fake | bool
           and inventory_hostname in groups['neutron-dhcp-agent']
           or inventory_hostname in groups['neutron-l3-agent']
           or inventory_hostname in groups['neutron-lbaas-agent']
           or inventory_hostname in groups['neutron-metadata-agent']
+          or inventory_hostname in groups['neutron-metering-agent']
         )
       )
 
@@ -164,7 +175,8 @@
        or inventory_hostname in groups['neutron-dhcp-agent']
        or inventory_hostname in groups['neutron-l3-agent']
        or inventory_hostname in groups['neutron-lbaas-agent']
-       or inventory_hostname in groups['neutron-metadata-agent'])
+       or inventory_hostname in groups['neutron-metadata-agent']
+       or inventory_hostname in groups['neutron-metering-agent'])
 
 - name: Remove the containers running neutron-server and neutron agents
   kolla_docker:
@@ -181,7 +193,8 @@
        { name: neutron_dhcp_agent, group: neutron-dhcp-agent },
        { name: neutron_l3_agent, group: neutron-l3-agent },
        { name: neutron_lbaas_agent, group: neutron-lbaas-agent, enabled: "{{ enable_neutron_lbaas | bool }}" },
-       { name: neutron_metadata_agent, group: neutron-metadata-agent }]
+       { name: neutron_metadata_agent, group: neutron-metadata-agent },
+       { name: neutron_metering_agent, group: neutron-metering-agent, enabled: "{{ enable_neutron_metering | bool }}" }]
     - neutron_container_envs.results
     - neutron_check_results.results
 
@@ -200,12 +213,14 @@
           or inventory_hostname in groups['neutron-l3-agent']
           or inventory_hostname in groups['neutron-lbaas-agent']
           or inventory_hostname in groups['neutron-metadata-agent']
+          or inventory_hostname in groups['neutron-metering-agent']
         ) or
         ( enable_nova_fake | bool
           and inventory_hostname in groups['neutron-dhcp-agent']
           or inventory_hostname in groups['neutron-l3-agent']
           or inventory_hostname in groups['neutron-lbaas-agent']
           or inventory_hostname in groups['neutron-metadata-agent']
+          or inventory_hostname in groups['neutron-metering-agent']
         )
       )
     - config_strategy == "COPY_ONCE" or openvswitch_agent_envs['KOLLA_CONFIG_STRATEGY'] == 'COPY_ONCE'
@@ -223,7 +238,8 @@
        or inventory_hostname in groups['neutron-dhcp-agent']
        or inventory_hostname in groups['neutron-l3-agent']
        or inventory_hostname in groups['neutron-lbaas-agent']
-       or inventory_hostname in groups['neutron-metadata-agent'])
+       or inventory_hostname in groups['neutron-metadata-agent']
+       or inventory_hostname in groups['neutron-metering-agent'])
     - config_strategy == "COPY_ONCE" or linuxbridge_agent_envs['KOLLA_CONFIG_STRATEGY'] == 'COPY_ONCE'
     - linuxbridge_agent_check_results['rc'] == 1
 
@@ -247,7 +263,8 @@
        { name: neutron_dhcp_agent, group: neutron-dhcp-agent },
        { name: neutron_l3_agent, group: neutron-l3-agent },
        { name: neutron_lbaas_agent, group: neutron-lbaas-agent, enabled: "{{ enable_neutron_lbaas | bool }}" },
-       { name: neutron_metadata_agent, group: neutron-metadata-agent }]
+       { name: neutron_metadata_agent, group: neutron-metadata-agent },
+       { name: neutron_metering_agent, group: neutron-metering-agent, enabled: "{{ enable_neutron_metering | bool }}" }]
     - neutron_container_envs.results
     - neutron_check_results.results
 
@@ -265,12 +282,14 @@
           or inventory_hostname in groups['neutron-l3-agent']
           or inventory_hostname in groups['neutron-lbaas-agent']
           or inventory_hostname in groups['neutron-metadata-agent']
+          or inventory_hostname in groups['neutron-metering-agent']
           and not enable_nova_fake | bool
         ) or
         ( inventory_hostname in groups['neutron-dhcp-agent']
           or inventory_hostname in groups['neutron-l3-agent']
           or inventory_hostname in groups['neutron-lbaas-agent']
           or inventory_hostname in groups['neutron-metadata-agent']
+          or inventory_hostname in groups['neutron-metering-agent']
           and enable_nova_fake | bool
         )
       )
@@ -289,6 +308,7 @@
        or inventory_hostname in groups['neutron-dhcp-agent']
        or inventory_hostname in groups['neutron-l3-agent']
        or inventory_hostname in groups['neutron-lbaas-agent']
-       or inventory_hostname in groups['neutron-metadata-agent'])
+       or inventory_hostname in groups['neutron-metadata-agent']
+       or inventory_hostname in groups['neutron-metering-agent'])
     - linuxbridge_agent_envs['KOLLA_CONFIG_STRATEGY'] != 'COPY_ONCE'
     - linuxbridge_agent_check_results['rc'] == 1

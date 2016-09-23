@@ -5,6 +5,14 @@ verbose = true
 log_dir = /var/log/kolla/ceilometer
 rpc_backend = rabbit
 
+# listen for notifications from diff. services
+http_control_exchanges = nova
+http_control_exchanges = neutron
+http_control_exchanges = keystone
+
+# exchange name for neutron notifications
+neutron_control_exchange = neutron
+
 [collector]
 
 [database]

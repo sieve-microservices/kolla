@@ -100,7 +100,7 @@ neutron_external_interface: "veth1"
 ####################
 # Use these options to set the various log levels across all OpenStack projects
 # Valid options are [ True, False ]
-openstack_logging_debug: "True"
+openstack_logging_debug: "False"
 
 # Valid options are [ novnc, spice ]
 #nova_console: "novnc"

@@ -35,6 +35,24 @@ if [[ $(stat -c %a ${KEYSTONE_LOG_DIR}) != "755" ]]; then
     chmod 755 ${KEYSTONE_LOG_DIR}
 fi
 
+# create fernet key repository dir and initialize it
+KEYSTONE_FERNET_KEYS_DIR="/etc/keystone/fernet-keys/"
+if [[ ! -d "${KEYSTONE_FERNET_KEYS_DIR}" ]]; then
+
+    mkdir -p ${KEYSTONE_FERNET_KEYS_DIR}
+
+    # handle permissons just as with logs
+    if [[ $(stat -c %U:%G ${KEYSTONE_FERNET_KEYS_DIR}) != "keystone:kolla" ]]; then
+        chown keystone:kolla ${KEYSTONE_FERNET_KEYS_DIR}
+    fi
+
+    if [[ $(stat -c %a ${KEYSTONE_FERNET_KEYS_DIR}) != "775" ]]; then
+        chmod 775 ${KEYSTONE_FERNET_KEYS_DIR}
+    fi
+
+    sudo -H -u keystone keystone-manage fernet_setup --keystone-user keystone --keystone-group keystone
+fi
+
 # Bootstrap and exit if KOLLA_BOOTSTRAP variable is set. This catches all cases
 # of the KOLLA_BOOTSTRAP variable being set, including empty.
 if [[ "${!KOLLA_BOOTSTRAP[@]}" ]]; then

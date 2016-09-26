@@ -6,6 +6,19 @@ log_file = /var/log/kolla/keystone/keystone.log
 
 secure_proxy_ssl_header = HTTP_X_FORWARDED_PROTO
 
+{% if enable_ceilometer | bool %}
+notification_driver = messagingv2
+notification_topics = notifications
+control_exchange = identity
+
+rabbit_userid = {{ rabbitmq_user }}
+rabbit_password = {{ rabbitmq_password }}
+rabbit_ha_queues = true
+rabbit_hosts = {% for host in groups['rabbitmq'] %}{{ hostvars[host]['ansible_' + hostvars[host]['api_interface']]['ipv4']['address'] }}:{{ rabbitmq_port }}{% if not loop.last %},{% endif %}{% endfor %}
+{% else %}
+notification_driver = noop
+{% endif %}
+
 [database]
 connection = mysql+pymysql://{{ keystone_database_user }}:{{ keystone_database_password }}@{{ keystone_database_address }}/{{ keystone_database_name }}
 max_retries = -1
@@ -21,15 +34,3 @@ provider = fernet
 [fernet_tokens]
 key_repository = /etc/keystone/fernet-keys/
 
-[oslo_messaging_notifications]
-{% if enable_ceilometer | bool %}
-notification_driver = messagingv2
-
-[oslo_messaging_rabbit]
-rabbit_userid = {{ rabbitmq_user }}
-rabbit_password = {{ rabbitmq_password }}
-rabbit_ha_queues = true
-rabbit_hosts = {% for host in groups['rabbitmq'] %}{{ hostvars[host]['ansible_' + hostvars[host]['api_interface']]['ipv4']['address'] }}:{{ rabbitmq_port }}{% if not loop.last %},{% endif %}{% endfor %}
-{% else %}
-notification_driver = noop
-{% endif %}

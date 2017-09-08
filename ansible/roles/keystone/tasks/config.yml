@@ -6,6 +6,8 @@
     recurse: yes
   with_items:
     - "keystone"
+    - "keystone-fernet"
+    - "keystone-ssh"
 
 - name: Copying over config.json files for services
   template:
@@ -13,6 +15,8 @@
     dest: "{{ node_config_directory }}/{{ item }}/config.json"
   with_items:
     - "keystone"
+    - "keystone-fernet"
+    - "keystone-ssh"
 
 - name: Copying over keystone.conf
   merge_configs:
@@ -28,6 +32,8 @@
     dest: "{{ node_config_directory }}/{{ item }}/keystone.conf"
   with_items:
     - "keystone"
+    - "keystone-fernet"
+    - "keystone-ssh"
 
 - name: Copying over wsgi-keystone.conf
   template:

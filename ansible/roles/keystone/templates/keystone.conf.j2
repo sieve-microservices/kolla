@@ -10,6 +10,15 @@ secure_proxy_ssl_header = HTTP_X_FORWARDED_PROTO
 connection = mysql+pymysql://{{ keystone_database_user }}:{{ keystone_database_password }}@{{ keystone_database_address }}/{{ keystone_database_name }}
 max_retries = -1
 
+{% if keystone_token_provider == 'fernet' %}
+[token]
+provider = {{ keystone_token_provider }}
+expiration = {{ fernet_token_expiry }}
+
+[fernet_tokens]
+max_active_keys = {{ (groups['keystone'] | length) + 1 }}
+{% endif %}
+
 [cache]
 backend = oslo_cache.memcache_pool
 enabled = True

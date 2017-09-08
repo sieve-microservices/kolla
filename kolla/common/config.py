@@ -189,7 +189,7 @@ SOURCES = {
         'type': 'url',
         'location': ('http://tarballs.openstack.org/ironic/'
                      'ironic-4.3.0.tar.gz')},
-    'keystone': {
+    'keystone-base': {
         'type': 'url',
         'location': ('http://tarballs.openstack.org/keystone/'
                      'keystone-8.1.0.tar.gz')},

@@ -103,6 +103,7 @@ haproxy_stats_port: "1984"
 
 keystone_public_port: "5000"
 keystone_admin_port: "35357"
+keystone_ssh_port: "8023"
 
 glance_api_port: "9292"
 glance_registry_port: "9191"
@@ -203,6 +204,12 @@ nova_keystone_user: "nova"
 # Nova fake driver and the number of fake driver per compute node
 enable_nova_fake: "no"
 num_nova_fake_per_node: 5
+
+#####################################
+# Keystone - Identity Service options
+#####################################
+keystone_token_provider: "uuid"
+fernet_token_expiry: 86400
 
 ####################
 # RabbitMQ options

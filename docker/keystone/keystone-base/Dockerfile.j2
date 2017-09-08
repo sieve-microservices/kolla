@@ -8,6 +8,7 @@ RUN yum -y install openstack-keystone \
         python-keystoneclient \
         httpd \
         mod_wsgi \
+        python-ldappool \
     && yum clean all
 
 RUN mkdir -p /var/www/cgi-bin/keystone \
@@ -21,12 +22,14 @@ RUN apt-get install -y --no-install-recommends \
         keystone \
         apache2 \
         libapache2-mod-wsgi \
+        python-ldappool \
     && apt-get clean
 
 RUN mkdir -p /var/www/cgi-bin/keystone \
     && cp -a /usr/share/keystone/wsgi.py /var/www/cgi-bin/keystone/main \
     && cp -a /usr/share/keystone/wsgi.py /var/www/cgi-bin/keystone/admin \
-    && echo > /etc/apache2/ports.conf
+    && echo > /etc/apache2/ports.conf \
+    && rm /etc/apache2/sites-enabled/keystone.conf
 
     {% endif %}
 {% elif install_type == 'source' %}
@@ -35,6 +38,7 @@ RUN mkdir -p /var/www/cgi-bin/keystone \
 RUN yum -y install \
         httpd \
         mod_wsgi \
+        python-ldappool \
     && yum clean all \
     && sed -i -r 's,^(Listen 80),#\1,' /etc/httpd/conf/httpd.conf
 
@@ -48,8 +52,8 @@ RUN apt-get install -y --no-install-recommends \
 
     {% endif %}
 
-ADD keystone-archive /keystone-source
-RUN ln -s keystone-source/* keystone \
+ADD keystone-base-archive /keystone-base-source
+RUN ln -s keystone-base-source/* keystone \
     && useradd --user-group keystone \
     && /var/lib/kolla/venv/bin/pip --no-cache-dir install --upgrade -c requirements/upper-constraints.txt /keystone \
     && mkdir -p /etc/keystone /var/www/cgi-bin/keystone /var/log/apache2 /home/keystone \
@@ -64,7 +68,6 @@ RUN usermod -a -G kolla keystone \
     && chown -R keystone: /var/www/cgi-bin/keystone \
     && chmod 755 /var/www/cgi-bin/keystone/*
 
-COPY keystone_bootstrap.py /usr/local/bin/kolla_keystone_bootstrap
-COPY extend_start.sh /usr/local/bin/kolla_extend_start
-RUN chmod 755 /usr/local/bin/kolla_extend_start /usr/local/bin/kolla_keystone_bootstrap
+{% block keystone_base_footer %}{% endblock %}
+{% block footer %}{% endblock %}
 {{ include_footer }}

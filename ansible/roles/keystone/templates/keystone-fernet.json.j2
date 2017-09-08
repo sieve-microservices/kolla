@@ -1,7 +1,14 @@
 {% set cron_cmd = 'cron -f' if kolla_base_distro in ['ubuntu', 'debian'] else 'crond -s -n' %}
 {
     "command": "{{ cron_cmd }}",
-    "config_files": [{
+    "config_files": [
+        {
+            "source": "{{ container_config_directory }}/keystone.conf",
+            "dest": "/etc/keystone/keystone.conf",
+            "owner": "keystone",
+            "perm": "0600"
+        },
+        {
             "source": "{{ container_config_directory }}/crontab",
             "dest": "/var/spool/cron/crontabs/root/fernet-cron",
             "owner": "root",

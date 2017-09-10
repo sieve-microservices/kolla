@@ -86,6 +86,7 @@ tunnel_interface: "{{ network_interface }}"
 neutron_plugin_agent: "openvswitch"
 
 # The default ports used by each service.
+ceilometer_api_port: "8777"
 mariadb_port: "3306"
 mariadb_wsrep_port: "4567"
 mariadb_ist_port: "4568"
@@ -183,6 +184,7 @@ enable_nova: "yes"
 enable_rabbitmq: "yes"
 
 # Additional optional OpenStack services are specified here
+enable_ceilometer: "no"
 enable_central_logging: "no"
 enable_ceph: "no"
 enable_ceph_rgw: "no"

@@ -4,21 +4,46 @@ MAINTAINER {{ maintainer }}
 {% if install_type == 'binary' %}
     {% if base_distro in ['centos', 'fedora', 'oraclelinux', 'rhel'] %}
 
-RUN yum install -y \
+RUN yum -y install \
         openstack-ceilometer-compute \
         python-ceilometerclient \
     && yum clean all
 
-    {% elif base_distro in ['ubuntu'] %}
+    {% elif base_distro in ['ubuntu', 'debian'] %}
 
-RUN apt-get install -y --no-install-recommends \
+RUN apt-get -y install --no-install-recommends \
         ceilometer-agent-compute \
         python-ceilometerclient \
+        libvirt-dev \
+        gcc \
+        python-dev \
+        pkg-config \
+    && apt-get clean
+
+RUN pip install --upgrade libvirt-python
+
+    {% endif %}
+{% elif install_type == 'source' %}
+    {% if base_distro in ['centos', 'fedora', 'oraclelinux', 'rhel'] %}
+
+RUN yum -y install \
+        libvirt-devel \
+    && yum clean all
+
+    {% elif base_distro in ['ubuntu', 'debian'] %}
+
+RUN apt-get -y install --no-install-recommends \
+        libvirt-dev \
     && apt-get clean
 
     {% endif %}
+
+RUN /var/lib/kolla/venv/bin/pip --no-cache-dir install --upgrade -c requirements/upper-constraints.txt libvirt-python
+
 {% endif %}
 
 {{ include_footer }}
 
-USER ceilometer
+# NOTE(huikang): non-root user does not work with libvirt.sock.
+#                Need configuration in nova-libvirt container to allow
+#                USER ceilometer to access libvirt.sock

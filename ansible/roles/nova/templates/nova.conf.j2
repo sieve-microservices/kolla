@@ -55,6 +55,39 @@ compute_driver = libvirt.LibvirtDriver
 # Though my_ip is not used directly, lots of other variables use $my_ip
 my_ip = {{ hostvars[inventory_hostname]['ansible_' + api_interface]['ipv4']['address'] }}
 
+{% if enable_ceilometer | bool %}
+
+# The messaging driver to use, defaults to rabbit. Other drivers include qpid
+# and zmq. (string value)
+rpc_backend = rabbit
+
+# Define the notification format for Identity Service events. A "basic"
+# notification has information about the resource being operated on. A "cadf"
+# notification has the same information, as well as information about the
+# initiator of the event. (string value)
+# Allowed values: basic, cadf
+notification_format = basic
+# The Drivers(s) to handle sending notifications. Possible values are
+# messaging, messagingv2, routing, log, test, noop (multi valued)
+notification_driver = messagingv2
+# AMQP topic used for OpenStack notifications. (list value)
+# Deprecated group/name - [rpc_notifier2]/topics
+notification_topics = notifications
+
+# The default exchange under which topics are scoped. May be overridden by an
+# exchange name specified in the transport_url option. (string value)
+control_exchange = openstack
+
+instance_usage_audit = True
+instance_usage_audit_period = hour
+notify_on_state_change = vm_and_task_state
+
+# enable collecting CPU related meters from the compute host machines
+compute_monitors = ComputeDriverCPUMonitor
+{% else %}
+notification_driver = noop
+{% endif %}
+
 {% if nova_console == 'novnc' %}
 novncproxy_host = {{ hostvars[inventory_hostname]['ansible_' + api_interface]['ipv4']['address'] }}
 novncproxy_port = {{ nova_novncproxy_port }}
@@ -91,7 +124,7 @@ api_endpoint = {{ internal_protocol }}://{{ kolla_internal_fqdn }}:{{ ironic_api
 [oslo_messaging_rabbit]
 rabbit_userid = {{ rabbitmq_user }}
 rabbit_password = {{ rabbitmq_password }}
-rabbit_ha_queues = true
+rabbit_ha_queues = false
 rabbit_hosts = {% for host in groups['rabbitmq'] %}{{ hostvars[host]['ansible_' + hostvars[host]['api_interface']]['ipv4']['address'] }}:{{ rabbitmq_port }}{% if not loop.last %},{% endif %}{% endfor %}
 
 [oslo_concurrency]
@@ -134,7 +167,6 @@ backend = oslo_cache.memcache_pool
 enabled = True
 memcache_servers = {% for host in groups['memcached'] %}{{ hostvars[host]['ansible_' + hostvars[host]['api_interface']]['ipv4']['address'] }}:{{ memcached_port }}{% if not loop.last %},{% endif %}{% endfor %}
 
-
 [keystone_authtoken]
 auth_uri = {{ internal_protocol }}://{{ kolla_internal_fqdn }}:{{ keystone_public_port }}
 auth_url = {{ admin_protocol }}://{{ kolla_internal_fqdn }}:{{ keystone_admin_port }}
@@ -149,7 +181,6 @@ memcache_security_strategy = ENCRYPT
 memcache_secret_key = {{ memcache_secret_key }}
 memcached_servers = {% for host in groups['memcached'] %}{{ hostvars[host]['ansible_' + hostvars[host]['api_interface']]['ipv4']['address'] }}:{{ memcached_port }}{% if not loop.last %},{% endif %}{% endfor %}
 
-
 [libvirt]
 connection_uri = "qemu+tcp://{{ hostvars[inventory_hostname]['ansible_' + api_interface]['ipv4']['address'] }}/system"
 {% if enable_ceph | bool %}
@@ -161,6 +192,3 @@ rbd_secret_uuid = {{ rbd_secret_uuid }}
 disk_cachemodes="network=writeback"
 hw_disk_discard = unmap
 {% endif %}
-
-[oslo_messaging_notifications]
-driver = noop

@@ -7,6 +7,40 @@ log_file = /var/log/kolla/keystone/keystone.log
 secure_proxy_ssl_header = HTTP_X_FORWARDED_PROTO
 admin_token = {{ keystone_admin_token }}
 
+{% if enable_ceilometer | bool %}
+
+# The messaging driver to use, defaults to rabbit. Other drivers include qpid
+# and zmq. (string value)
+rpc_backend = rabbit
+
+# Define the notification format for Identity Service events. A "basic"
+# notification has information about the resource being operated on. A "cadf"
+# notification has the same information, as well as information about the
+# initiator of the event. (string value)
+# Allowed values: basic, cadf
+notification_format = basic
+
+# The Drivers(s) to handle sending notifications. Possible values are
+# messaging, messagingv2, routing, log, test, noop (multi valued)
+notification_driver = messagingv2
+
+# AMQP topic used for OpenStack notifications. (list value)
+# Deprecated group/name - [rpc_notifier2]/topics
+notification_topics = notifications
+
+# The default exchange under which topics are scoped. May be overridden by an
+# exchange name specified in the transport_url option. (string value)
+control_exchange = identity
+
+[oslo_messaging_rabbit]
+rabbit_userid = {{ rabbitmq_user }}
+rabbit_password = {{ rabbitmq_password }}
+rabbit_ha_queues = false
+rabbit_hosts = {% for host in groups['rabbitmq'] %}{{ hostvars[host]['ansible_' + hostvars[host]['api_interface']]['ipv4']['address'] }}:{{ rabbitmq_port }}{% if not loop.last %},{% endif %}{% endfor %}
+{% else %}
+notification_driver = noop
+{% endif %}
+
 [database]
 connection = mysql+pymysql://{{ keystone_database_user }}:{{ keystone_database_password }}@{{ keystone_database_address }}/{{ keystone_database_name }}
 max_retries = -1

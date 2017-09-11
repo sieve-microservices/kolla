@@ -6,6 +6,18 @@ log_file = /var/log/kolla/keystone/keystone.log
 
 secure_proxy_ssl_header = HTTP_X_FORWARDED_PROTO
 
+{% if enable_ceilometer | bool %}
+rpc_backend = rabbit
+notification_format = basic
+control_exchange = identity
+{% endif %}
+
+[oslo_messaging_rabbit]
+rabbit_userid = {{ rabbitmq_user }}
+rabbit_password = {{ rabbitmq_password }}
+rabbit_ha_queues = false
+rabbit_hosts = {% for host in groups['rabbitmq'] %}{{ hostvars[host]['ansible_' + hostvars[host]['api_interface']]['ipv4']['address'] }}:{{ rabbitmq_port }}{% if not loop.last %},{% endif %}{% endfor %}
+
 [database]
 connection = mysql+pymysql://{{ keystone_database_user }}:{{ keystone_database_password }}@{{ keystone_database_address }}/{{ keystone_database_name }}
 max_retries = -1
@@ -23,3 +35,11 @@ max_active_keys = {{ (groups['keystone'] | length) + 1 }}
 backend = oslo_cache.memcache_pool
 enabled = True
 memcache_servers = {% for host in groups['memcached'] %}{{ hostvars[host]['ansible_' + hostvars[host]['api_interface']]['ipv4']['address'] }}:{{ memcached_port }}{% if not loop.last %},{% endif %}{% endfor %}
+
+[oslo_messaging_notifications]
+{% if enable_ceilometer | bool %}
+driver = messagingv2
+topics = notifications
+{% else %}
+driver = noop
+{% endif %}

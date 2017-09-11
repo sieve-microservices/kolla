@@ -12,13 +12,14 @@ stack_domain_admin_password = {{ heat_domain_admin_password }}
 stack_user_domain_name = heat_user_domain
 
 rpc_backend = rabbit
+control_exchange = openstack
 deferred_auth_method = trusts
 trusts_delegated_roles = heat_stack_owner
 
 [oslo_messaging_rabbit]
 rabbit_userid = {{ rabbitmq_user }}
 rabbit_password = {{ rabbitmq_password }}
-rabbit_ha_queues = true
+rabbit_ha_queues = false
 rabbit_hosts = {% for host in groups['rabbitmq'] %}{{ hostvars[host]['ansible_' + hostvars[host]['api_interface']]['ipv4']['address'] }}:{{ rabbitmq_port }}{% if not loop.last %},{% endif %}{% endfor %}
 
 {% if service_name == 'heat-api' %}
@@ -51,12 +52,10 @@ memcache_security_strategy = ENCRYPT
 memcache_secret_key = {{ memcache_secret_key }}
 memcached_servers = {% for host in groups['memcached'] %}{{ hostvars[host]['ansible_' + hostvars[host]['api_interface']]['ipv4']['address'] }}:{{ memcached_port }}{% if not loop.last %},{% endif %}{% endfor %}
 
-
 [cache]
 backend = oslo_cache.memcache_pool
 enabled = True
 memcache_servers = {% for host in groups['memcached'] %}{{ hostvars[host]['ansible_' + hostvars[host]['api_interface']]['ipv4']['address'] }}:{{ memcached_port }}{% if not loop.last %},{% endif %}{% endfor %}
-
 
 [trustee]
 auth_uri = {{ internal_protocol }}://{{ kolla_internal_fqdn }}:{{ keystone_public_port }}
@@ -75,7 +74,12 @@ auth_uri = {{ internal_protocol }}://{{ kolla_internal_fqdn }}:{{ keystone_publi
 auth_uri = {{ internal_protocol }}://{{ kolla_internal_fqdn }}:{{ keystone_public_port }}
 
 [oslo_messaging_notifications]
+{% if enable_ceilometer | bool %}
+driver = messagingv2
+topics = notifications
+{% else %}
 driver = noop
+{% endif %}
 
 [clients]
 endpoint_type = internalURL

@@ -8,6 +8,11 @@ log_dir = /var/log/kolla/neutron
 # stderr and collected by Docker
 use_stderr = False
 
+{% if enable_ceilometer | bool %}
+rpc_backend = rabbit
+control_exchange = neutron
+{% endif %}
+
 bind_host = {{ hostvars[inventory_hostname]['ansible_' + api_interface]['ipv4']['address'] }}
 bind_port = {{ neutron_server_port }}
 
@@ -51,7 +56,7 @@ lock_path = /var/lib/neutron/tmp
 [oslo_messaging_rabbit]
 rabbit_userid = {{ rabbitmq_user }}
 rabbit_password = {{ rabbitmq_password }}
-rabbit_ha_queues = true
+rabbit_ha_queues = false
 rabbit_hosts = {% for host in groups['rabbitmq'] %}{{ hostvars[host]['ansible_' + hostvars[host]['api_interface']]['ipv4']['address'] }}:{{ rabbitmq_port }}{% if not loop.last %},{% endif %}{% endfor %}
 
 [agent]
@@ -75,6 +80,10 @@ memcache_security_strategy = ENCRYPT
 memcache_secret_key = {{ memcache_secret_key }}
 memcached_servers = {% for host in groups['memcached'] %}{{ hostvars[host]['ansible_' + hostvars[host]['api_interface']]['ipv4']['address'] }}:{{ memcached_port }}{% if not loop.last %},{% endif %}{% endfor %}
 
-
 [oslo_messaging_notifications]
+{% if enable_ceilometer | bool %}
+driver = messagingv2
+topics = notifications
+{% else %}
 driver = noop
+{% endif %}

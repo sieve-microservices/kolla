@@ -10,6 +10,11 @@ bind_port = {{ glance_api_port }}
 
 registry_host = {{ kolla_internal_fqdn }}
 
+{% if enable_ceilometer | bool %}
+rpc_backend = rabbit
+control_exchange = openstack
+{% endif %}
+
 {% if enable_ceph | bool %}
 show_image_direct_url= True
 {% endif %}
@@ -50,5 +55,16 @@ default_store = file
 filesystem_store_datadir = /var/lib/glance/images/
 {% endif %}
 
+[oslo_messaging_rabbit]
+rabbit_userid = {{ rabbitmq_user }}
+rabbit_password = {{ rabbitmq_password }}
+rabbit_ha_queues = false
+rabbit_hosts = {% for host in groups['rabbitmq'] %}{{ hostvars[host]['ansible_' + hostvars[host]['api_interface']]['ipv4']['address'] }}:{{ rabbitmq_port }}{% if not loop.last %},{% endif %}{% endfor %}
+
 [oslo_messaging_notifications]
+{% if enable_ceilometer | bool %}
+driver = messagingv2
+topics = notifications
+{% else %}
 driver = noop
+{% endif %}
